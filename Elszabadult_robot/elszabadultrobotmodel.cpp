@@ -110,10 +110,10 @@ void elszabadultrobotmodel::robotStep()
     int currJ = 0;
     int nextI, nextJ;
 
-    //_gameTable.resize(size);
+
     for(int i = 0; i < size; i++)
     {
-        //_gameTable[i].resize(size);
+
         for(int j = 0; j < size; j++)
         {
             if(_gameTable[i][j] == Robot)

@@ -102,7 +102,7 @@ void elszabadultrobotwidget::redrawTable()
 {
     int size = model->getSize();
 
-    tableButton.resize(size);
+
     for(int i=0; i<size; i++)
     {
         tableButton[i].resize(size);
