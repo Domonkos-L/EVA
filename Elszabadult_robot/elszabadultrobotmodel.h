@@ -23,6 +23,7 @@ private:
     int size;
     Direction  Dir;
     QVector<QVector<Table>> _gameTable;
+    bool wasBroken = false;
 
 signals:
 
