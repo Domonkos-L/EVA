@@ -2,6 +2,8 @@
 #include "rand.h"
 #include <QDebug>
 #include <QMessageBox>
+#include <QString>
+#include <QTime>
 
 elszabadultrobotmodel::elszabadultrobotmodel(QObject *parent, int size) : QObject(parent)
 {
@@ -50,6 +52,9 @@ elszabadultrobotmodel::elszabadultrobotmodel(QObject *parent, int size) : QObjec
     }
 
 }
+
+
+
 
 int elszabadultrobotmodel::getSize()
 {
@@ -135,24 +140,40 @@ void elszabadultrobotmodel::robotStep()
     switch(Dir){
     case E:
         collidedother = (currI == 0);
+        if(collidedother)
+        {
+            break;
+        }
         nextI = currI - 1;
         nextJ = currJ;
         collidedwall = (_gameTable[nextI][nextJ] == Wall);
         break;
     case H:
         collidedother = (currI == size-1);
+	if(collidedother)
+	{
+	    break;
+	}
         nextI = currI + 1;
         nextJ = currJ;
         collidedwall = (_gameTable[nextI][nextJ] == Wall);
         break;
     case J:
         collidedother = (currJ== size-1);
+	if(collidedother)
+	{
+	    break;
+	}
         nextI = currI;
         nextJ = currJ + 1;
         collidedwall = (_gameTable[nextI][nextJ] == Wall);
         break;
     case B:
         collidedother = (currJ == 0);
+	if(collidedother)
+	{
+	    break;
+	}
         nextI = currI;
         nextJ = currJ - 1;
         collidedwall = (_gameTable[nextI][nextJ] == Wall);
@@ -170,6 +191,7 @@ void elszabadultrobotmodel::robotStep()
     if(collidedother)
     {
         newDir();
+        robotStep();
 
     }
 
@@ -178,14 +200,23 @@ void elszabadultrobotmodel::robotStep()
 
         if(_gameTable[nextI][nextJ] == Broken_Wall)
         {
-            _gameTable[currI][currJ] = Empty;
-            _gameTable[nextI][nextJ] = Robot;
-            wasBroken = true;
+            if(wasBroken)
+            {
+                _gameTable[currI][currJ] = Broken_Wall;
+                _gameTable[nextI][nextJ] = Robot;
+                wasBroken = true;
+            }
+            else
+            {
+                _gameTable[currI][currJ] = Empty;
+                _gameTable[nextI][nextJ] = Robot;
+                wasBroken = true;
+            }
+
             return;
         }
 
-        _gameTable[currI][currJ] = Empty;
-        _gameTable[nextI][nextJ] = Robot;
+        
 
 
 
@@ -194,11 +225,14 @@ void elszabadultrobotmodel::robotStep()
             _gameTable[currI][currJ] = Broken_Wall;
             _gameTable[nextI][nextJ] = Robot;
             wasBroken = false;
+            return;
         }
 
+        _gameTable[currI][currJ] = Empty;
+        _gameTable[nextI][nextJ] = Robot;
 
 
-        //checkGame();
+
     }
 
 
@@ -217,18 +251,39 @@ void elszabadultrobotmodel::checkGame()
     bool isWon = _gameTable[(size-1)/2][(size-1)/2] == Robot;
     QMessageBox win;
     win.setWindowTitle("Game Over");
-    win.setText("You Won");
-    win.setInformativeText("Your Time is: ");
+    isEnd = false;
+
+    bool isLost = true;
+
     win.setStandardButtons(QMessageBox::Ok);
     if(isWon)
     {
+        win.setText("You Won");
+        QString time = QString::number(getTime()/1000);
+        win.setInformativeText("Your Time is: "+ time + " seconds.");
         win.exec();
-
-
-
-
+        isEnd = true;
 
     }
+
+    for(int i = 0; i < _gameTable.size(); i++)
+    {
+        for(int j = 0; j < _gameTable.size(); j++)
+        {
+            isLost = isLost && _gameTable[i][j] != Empty;
+        }
+    }
+
+    if(isLost)
+    {
+        win.setText("You Lost");
+        QString time = QString::number(getTime()/1000);
+        win.setInformativeText("Your Time is: "+ time + " seconds.");
+        win.setDetailedText("You ran out of free spaces.");
+        win.exec();
+        isEnd = true;
+    }
+
 
 }
 

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include<QVector>
+#include <QTime>
 
 class elszabadultrobotmodel : public QObject
 {
@@ -17,6 +18,11 @@ public:
     void checkGame();
     Table getButton(int i, int j);
     void setButton(int i, int j, Table t);
+    void startTimer() {myTimer.start();}
+    int getTime() {return myTimer.elapsed();}
+    bool getEnd() {return isEnd;}
+    void reTimer() {myTimer.restart();}
+
 
 
 private:
@@ -24,7 +30,11 @@ private:
     Direction  Dir;
     QVector<QVector<Table>> _gameTable;
     bool wasBroken = false;
-
+    QTime myTimer;
+    bool isEnd = false;
+    int remainingTime;
+    
+    
 signals:
 
 public slots:

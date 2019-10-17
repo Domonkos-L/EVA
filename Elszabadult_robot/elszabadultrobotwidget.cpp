@@ -21,7 +21,7 @@ elszabadultrobotwidget::elszabadultrobotwidget(QWidget *parent)
     connect(newGame, SIGNAL(accepted()), this, SLOT(newGameButtonClicked()));
 
 
-   // generateTable();
+    generateTable();
 
 }
 
@@ -95,6 +95,11 @@ void elszabadultrobotwidget::newGameButtonClicked()
     }
 
     redrawTable();
+    if(model->getTime() > 0)
+    {
+        model->reTimer();
+    }
+    model->startTimer();
 
 }
 
@@ -102,19 +107,21 @@ void elszabadultrobotwidget::generateTable()
 {
 
 
-    model = new elszabadultrobotmodel(this, 7);
-
     if(!tableButton.empty())
     {
-        for( int i = 0; i < 7; i++)
+        delete model;
+        for( int i = 0; i < tableButton.size(); i++)
         {
-            for(int j = 0;j < 7; j++)
+            for(int j = 0; j < tableButton.size(); j++)
             {
                 tableLayout->removeWidget(tableButton[i][j]);
                 delete tableButton[i][j];
             }
         }
     }
+
+    model = new elszabadultrobotmodel(this, 7);
+
 
     tableButton.resize(7);
     for(int i = 0; i < 7; i++)
@@ -168,10 +175,12 @@ void elszabadultrobotwidget::redrawTable()
 
     model->checkGame();
 
-   /* if(model->getWon() == true)
+    if(model->getEnd() == true)
     {
         generateTable();
-    }*/
+    }
+
+
 }
 
 
