@@ -13,6 +13,7 @@ elszabadultrobotwidget::elszabadultrobotwidget(QWidget *parent)
     pause = new QPushButton(tr("Pause"));
     resume = new QPushButton(tr("Resume"));
     time = new QLabel(tr("Time"));
+    time->setFixedHeight(50);
     mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(newGameButton);
     mainLayout->addWidget(resume);
